@@ -1,0 +1,30 @@
+src/
+├── main/
+│   ├── java/
+│   │   └── com/
+│   │       └── smartcompare/
+│   │           ├── config/
+│   │           ├── user/
+│   │           │   ├── application/
+│   │           │   ├── domain/
+│   │           │   │   ├── dto/
+│   │           │   │   ├── exception/
+│   │           │   ├── infrastructure/
+│   │           ├── product/
+│   │           │   ├── application/
+│   │           │   ├── domain/
+│   │           │   ├── infrastructure/
+│   │           ├── comparison/
+│   │           ├── favorite/
+│   │           ├── searchhistory/
+│   │           ├── recommendation/
+│   │           ├── GlobalExceptionHandler.java
+│   │           └── SmartCompareApplication.java
+│   └── resources/
+└── test/
+    └── java/
+        └── com/
+            └── smartcompare/
+                ├── user/
+                └── product/
+
