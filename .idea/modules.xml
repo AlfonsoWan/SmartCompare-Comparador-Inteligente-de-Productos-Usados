@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Proyecto de DBP.iml" filepath="$PROJECT_DIR$/.idea/Proyecto de DBP.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SmartCompare/SmartCompare.iml" filepath="$PROJECT_DIR$/SmartCompare/SmartCompare.iml" />
     </modules>
   </component>
 </project>
