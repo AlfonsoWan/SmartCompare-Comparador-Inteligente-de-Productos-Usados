@@ -18,43 +18,42 @@ public class SearchHistoryService {
     private final SearchHistoryRepository searchHistoryRepository;
 
     @Transactional(readOnly = true)
-    public SearchHistoryDTO findById(Long id) {
-        SearchHistory searchHistory = searchHistoryRepository.findById(id)
-                .orElseThrow(() -> new SearchHistoryNotFoundException("Historial no encontrado: " + id));
-        return toDTO(searchHistory);
+    public List<SearchHistoryDTO> findAll() {
+        return searchHistoryRepository.findAll().stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<SearchHistoryDTO> findAll() {
-        return searchHistoryRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
+    public SearchHistoryDTO findById(Long id) {
+        return searchHistoryRepository.findById(id)
+                .map(this::toDTO)
+                .orElseThrow(() -> new SearchHistoryNotFoundException(id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<SearchHistoryDTO> findByUserId(Long userId) {
+        return searchHistoryRepository.findByUserId(userId).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public SearchHistoryDTO create(SearchHistoryDTO dto) {
+    public SearchHistoryDTO save(String terms, Long userId) {
         SearchHistory searchHistory = SearchHistory.builder()
-                .terms(dto.getTerms())
+                .terms(terms)
                 .date(LocalDateTime.now())
-                .userId(dto.getUserId())
+                .userId(userId)
                 .build();
-        SearchHistory saved = searchHistoryRepository.save(searchHistory);
-        return toDTO(saved);
+        return toDTO(searchHistoryRepository.save(searchHistory));
     }
 
-    @Transactional
-    public void delete(Long id) {
-        if (!searchHistoryRepository.existsById(id)) {
-            throw new SearchHistoryNotFoundException("Historial no encontrado: " + id);
-        }
-        searchHistoryRepository.deleteById(id);
-    }
-
-    private SearchHistoryDTO toDTO(SearchHistory searchHistory) {
+    private SearchHistoryDTO toDTO(SearchHistory entity) {
         return SearchHistoryDTO.builder()
-                .id(searchHistory.getId())
-                .terms(searchHistory.getTerms())
-                .date(searchHistory.getDate())
-                .userId(searchHistory.getUserId())
+                .id(entity.getId())
+                .terms(entity.getTerms())
+                .date(entity.getDate())
+                .userId(entity.getUserId())
                 .build();
     }
 }
-

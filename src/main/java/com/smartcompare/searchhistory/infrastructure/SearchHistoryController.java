@@ -4,35 +4,33 @@ import com.smartcompare.searchhistory.application.SearchHistoryService;
 import com.smartcompare.searchhistory.domain.dto.SearchHistoryDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/searchhistory")
+@RequestMapping("/api/search-history")
 @RequiredArgsConstructor
 public class SearchHistoryController {
     private final SearchHistoryService searchHistoryService;
 
-    @GetMapping
-    public ResponseEntity<List<SearchHistoryDTO>> getAll() {
-        return ResponseEntity.ok(searchHistoryService.findAll());
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<SearchHistoryDTO>> getByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(searchHistoryService.findByUserId(userId));
+    }
+
+    @PostMapping
+    public ResponseEntity<SearchHistoryDTO> saveSearch(
+            @RequestParam String terms,
+            Authentication authentication) {
+        // Asumiendo que el ID del usuario está almacenado en el principal
+        Long userId = Long.parseLong(authentication.getName());
+        return ResponseEntity.ok(searchHistoryService.save(terms, userId));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<SearchHistoryDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(searchHistoryService.findById(id));
     }
-
-    @PostMapping
-    public ResponseEntity<SearchHistoryDTO> create(@Validated @RequestBody SearchHistoryDTO dto) {
-        return ResponseEntity.ok(searchHistoryService.create(dto));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        searchHistoryService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
 }
-
