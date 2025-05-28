@@ -61,10 +61,6 @@ public class ProductService {
         return toDTO(product);
     }
 
-    public MercadoLibreSearchResponse searchInMercadoLibre(String query, Integer offset, Integer limit) {
-        return mercadoLibreClient.searchProducts(query, offset, limit, acceptHeader);
-    }
-
     private ProductDTO toDTO(Product product) {
         return ProductDTO.builder()
                 .id(product.getId())
@@ -74,6 +70,33 @@ public class ProductService {
                 .source(product.getSource())
                 .url(product.getUrl())
                 .build();
+    }
+    // Valores por defecto para paginación
+    @Value("${mercadolibre.default-offset:0}")
+    private Integer defaultOffset;
+
+    @Value("${mercadolibre.default-limit:10}")
+    private Integer defaultLimit;
+
+    /**
+     * Búsqueda simple usando valores por defecto para offset/limit.
+     */
+    @Transactional(readOnly = true)
+    public List<ProductDTO> searchInMercadoLibre(String query) {
+        // Delegamos a la versión paginada
+        return searchInMercadoLibre(query, defaultOffset, defaultLimit);
+    }
+
+    /**
+     * Búsqueda paginada.
+     */
+    @Transactional(readOnly = true)
+    public List<ProductDTO> searchInMercadoLibre(String query, Integer offset, Integer limit) {
+        var response = mercadoLibreClient.search(query, offset, limit);
+        return response.getResults()
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
     }
 }
 
