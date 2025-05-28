@@ -2,6 +2,7 @@ package com.smartcompare.product.application;
 
 import com.smartcompare.product.domain.Product;
 import com.smartcompare.product.domain.dto.ProductDTO;
+import com.smartcompare.product.domain.dto.MercadoLibreSearchResponse;
 import com.smartcompare.product.domain.exception.ProductNotFoundException;
 import com.smartcompare.product.infrastructure.ProductRepository;
 import com.smartcompare.product.infrastructure.MercadoLibreClient;
@@ -60,7 +61,7 @@ public class ProductService {
         return toDTO(product);
     }
 
-    public Map<String, Object> searchInMercadoLibre(String query, Integer offset, Integer limit) {
+    public MercadoLibreSearchResponse searchInMercadoLibre(String query, Integer offset, Integer limit) {
         return mercadoLibreClient.searchProducts(query, offset, limit, acceptHeader);
     }
 
