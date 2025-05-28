@@ -1,19 +1,16 @@
 version: '3.8'
-
 services:
   postgres:
     image: postgres:latest
-    container_name: smartcompare-db
+    container_name: smartcompare-postgres
     environment:
-      POSTGRES_DB: smartcompare
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: postgres
     ports:
       - "5555:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./setup_database.sql:/docker-entrypoint-initdb.d/setup_database.sql
-    restart: unless-stopped
 
 volumes:
   postgres_data:
