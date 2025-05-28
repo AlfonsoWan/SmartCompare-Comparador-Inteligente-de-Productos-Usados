@@ -5,4 +5,3 @@ public class RecommendationNotFoundException extends RuntimeException {
         super(message);
     }
 }
-

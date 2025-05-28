@@ -2,10 +2,10 @@ package com.smartcompare.user.application;
 
 import com.smartcompare.user.domain.User;
 import com.smartcompare.user.domain.dto.UserDTO;
-import com.smartcompare.user.domain.exception.UserNotFoundException;
 import com.smartcompare.user.infrastructure.UserRepository;
 import com.smartcompare.user.domain.exception.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,6 +84,4 @@ public class UserService {
     public java.util.Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
-
-    // ...otros métodos existentes...
 }

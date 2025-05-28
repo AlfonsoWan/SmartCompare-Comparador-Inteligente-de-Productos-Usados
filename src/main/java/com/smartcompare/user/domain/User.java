@@ -1,6 +1,8 @@
 package com.smartcompare.user.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -15,9 +17,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @Column(nullable = false)
     private String name;
 
+    @Email
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -26,6 +30,7 @@ public class User {
 
     @Column(nullable = false)
     private String role; // USER, ADMIN
+
 
     @Column(nullable = false)
     private String password;

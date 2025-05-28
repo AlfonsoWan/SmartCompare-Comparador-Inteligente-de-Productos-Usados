@@ -25,4 +25,3 @@ public class AuthController {
         return ResponseEntity.ok(userService.registerWithJwt(userDTO));
     }
 }
-

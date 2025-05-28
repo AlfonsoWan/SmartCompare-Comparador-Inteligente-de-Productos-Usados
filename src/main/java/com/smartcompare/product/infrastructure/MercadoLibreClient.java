@@ -10,10 +10,9 @@ import java.util.Map;
 public interface MercadoLibreClient {
     @GetMapping("/sites/MLA/search")
     Map<String, Object> searchProducts(
-        @RequestParam("q") String query,
-        @RequestParam(value = "offset", required = false) Integer offset,
-        @RequestParam(value = "limit", required = false) Integer limit,
-        @RequestHeader(value = "Accept", defaultValue = "application/json") String acceptHeader
+            @RequestParam("q") String query,
+            @RequestParam(value = "offset", required = false) Integer offset,
+            @RequestParam(value = "limit", required = false) Integer limit,
+            @RequestHeader(value = "Accept", defaultValue = "application/json") String acceptHeader
     );
 }
-

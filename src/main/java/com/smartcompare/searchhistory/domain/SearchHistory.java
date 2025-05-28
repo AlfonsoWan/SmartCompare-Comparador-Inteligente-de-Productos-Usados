@@ -1,6 +1,7 @@
 package com.smartcompare.searchhistory.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import java.time.LocalDateTime;
 
@@ -16,7 +17,12 @@ public class SearchHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     private String terms;
+
+    @NotBlank
     private LocalDateTime date;
+
+    @NotBlank
     private Long userId;
 }

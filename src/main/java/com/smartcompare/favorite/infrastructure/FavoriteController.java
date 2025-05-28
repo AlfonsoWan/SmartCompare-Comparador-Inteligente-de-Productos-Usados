@@ -35,4 +35,3 @@ public class FavoriteController {
         return ResponseEntity.noContent().build();
     }
 }
-

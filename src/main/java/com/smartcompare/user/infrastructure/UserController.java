@@ -14,9 +14,6 @@ import org.springframework.validation.annotation.Validated;
 public class UserController {
     private final UserService userService;
 
-    /**
-     * Obtiene un usuario por email.
-     */
     @GetMapping("/by-email")
     public ResponseEntity<UserDTO> getByEmail(@RequestParam String email) {
         return userService.findByEmail(email)
@@ -34,12 +31,8 @@ public class UserController {
                 .build();
     }
 
-    /**
-     * Registra un nuevo usuario.
-     */
     @PostMapping
     public ResponseEntity<UserDTO> register(@Validated @RequestBody UserDTO dto) {
         return ResponseEntity.ok(userService.register(dto));
     }
 }
-

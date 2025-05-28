@@ -57,4 +57,3 @@ public class SearchHistoryService {
                 .build();
     }
 }
-

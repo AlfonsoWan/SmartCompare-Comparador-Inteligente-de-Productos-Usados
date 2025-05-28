@@ -5,4 +5,3 @@ public class ComparisonNotFoundException extends RuntimeException {
         super(message);
     }
 }
-

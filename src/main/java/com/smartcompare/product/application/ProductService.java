@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+
+
     private final MercadoLibreClient mercadoLibreClient;
 
     @Value("${mercadolibre.accept-header:application/json}")
@@ -61,7 +63,12 @@ public class ProductService {
     }
 
     public Map<String, Object> searchInMercadoLibre(String query, Integer offset, Integer limit) {
-        return mercadoLibreClient.searchProducts(query, offset, limit, acceptHeader);
+        try {
+            return mercadoLibreClient.searchProducts(query, offset, limit, acceptHeader);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al buscar productos en MercadoLibre: " + e.getMessage());
+        }
+
     }
 
     private ProductDTO toDTO(Product product) {
@@ -75,4 +82,3 @@ public class ProductService {
                 .build();
     }
 }
-

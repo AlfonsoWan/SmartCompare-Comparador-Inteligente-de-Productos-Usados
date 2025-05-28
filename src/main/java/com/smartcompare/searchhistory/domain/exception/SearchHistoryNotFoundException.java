@@ -5,4 +5,3 @@ public class SearchHistoryNotFoundException extends RuntimeException {
         super(message);
     }
 }
-

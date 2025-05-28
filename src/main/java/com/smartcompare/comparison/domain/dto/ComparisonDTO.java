@@ -14,4 +14,3 @@ public class ComparisonDTO {
     private LocalDateTime date;
     private Long userId;
 }
-

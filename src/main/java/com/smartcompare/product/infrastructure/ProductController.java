@@ -1,8 +1,8 @@
 package com.smartcompare.product.infrastructure;
 
-import lombok.RequiredArgsConstructor;
 import com.smartcompare.product.application.ProductService;
 import com.smartcompare.product.domain.dto.ProductDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
@@ -14,9 +14,6 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
 
-    /**
-     * Obtiene todos los productos paginados y ordenados, con filtros opcionales.
-     */
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAll(
             @RequestParam(defaultValue = "0") int page,
@@ -35,26 +32,16 @@ public class ProductController {
         }
         return ResponseEntity.ok(productos);
     }
-
-    /**
-     * Obtiene un producto por su ID.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findById(id));
     }
 
-    /**
-     * Crea un nuevo producto.
-     */
     @PostMapping
     public ResponseEntity<ProductDTO> create(@Validated @RequestBody ProductDTO dto) {
         return ResponseEntity.ok(productService.save(dto));
     }
 
-    /**
-     * Busca productos en MercadoLibre.
-     */
     @GetMapping("/mercadolibre/search")
     public ResponseEntity<?> searchInMercadoLibre(
             @RequestParam String query,

@@ -26,4 +26,3 @@ public class Comparison {
 
     private Long userId;
 }
-
