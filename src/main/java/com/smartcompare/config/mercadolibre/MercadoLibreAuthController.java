@@ -1,13 +1,6 @@
 package com.smartcompare.config.mercadolibre;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
-import jakarta.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
+import com.smartcompare.config.mercadolibre.token.MercadoLibreTokenService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,31 +8,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MercadoLibreAuthController {
 
-    @Value("${mercadolibre.clientId}")
-    private String clientId;
+    private final MercadoLibreAuthService authService;
+    private final MercadoLibreTokenService tokenService;
 
-    @Value("${mercadolibre.redirectUri}")
-    private String redirectUri;
-
-    private final MercadoLibreOAuthService oauthService;
-
-    public MercadoLibreAuthController(MercadoLibreOAuthService oauthService) {
-        this.oauthService = oauthService;
+    public MercadoLibreAuthController(MercadoLibreAuthService authService, MercadoLibreTokenService tokenService) {
+        this.authService = authService;
+        this.tokenService = tokenService;
     }
 
-    @GetMapping("/auth/mercadolibre/login")
-    public void login(HttpServletResponse response) throws IOException {
-        String authUrl = "https://auth.mercadolibre.com.ar/authorization?response_type=code"
-                + "&client_id=" + clientId
-                + "&redirect_uri=" + URLEncoder.encode(redirectUri, StandardCharsets.UTF_8);
-
-        response.sendRedirect(authUrl);
+    @GetMapping("/auth/mercadolibre")
+    public String iniciarAutenticacion(@RequestParam String codeChallenge) {
+        return authService.generarUrlAutorizacion(codeChallenge);
     }
 
     @GetMapping("/auth/mercadolibre/callback")
-    public ResponseEntity<String> callback(@RequestParam("code") String code) {
-        TokenResponse token = oauthService.exchangeCodeForToken(code);
-        // Guardar token en base de datos o sesión según tu lógica
-        return ResponseEntity.ok("Token obtenido: " + token.getAccess_token());
+    public String callback(@RequestParam String code, @RequestParam (required = false) String codeVerifier) {
+        String tokenResponse = authService.obtenerToken(code, codeVerifier);
+        System.out.println("Token recibido: " + tokenResponse);
+        tokenService.saveToken(tokenResponse);
+        return "Token guardado correctamente";
     }
 }

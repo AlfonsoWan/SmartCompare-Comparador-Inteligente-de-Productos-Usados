@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/users/register").permitAll()
                 .requestMatchers("/error").permitAll()
+                    .requestMatchers("/mercadolibre/search").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )

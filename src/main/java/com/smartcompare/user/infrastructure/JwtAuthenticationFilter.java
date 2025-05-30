@@ -58,4 +58,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         filterChain.doFilter(request, response);
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/auth/mercadolibre/login") || path.startsWith("/auth/mercadolibre/callback");
+    }
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 @FeignClient(name = "mercadolibre", url = "https://api.mercadolibre.com")
 public interface MercadoLibreClient {
 
-    @GetMapping("/sites/MLA/search")
+    @GetMapping("/sites/MLP/search")
     MercadoLibreSearchResponse searchProducts(
         @RequestParam("q") String query,
         @RequestParam(value = "offset", required = false) Integer offset,
