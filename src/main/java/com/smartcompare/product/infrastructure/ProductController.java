@@ -63,4 +63,15 @@ public class ProductController {
     ) {
         return ResponseEntity.ok(productService.searchInMercadoLibre(query, offset, limit));
     }
+
+    /**
+     * Busca productos en eBay.
+     */
+    @GetMapping("/ebay/search")
+    public ResponseEntity<?> searchInEbay(
+            @RequestParam String query,
+            @RequestParam(required = false) Integer limit
+    ) {
+        return ResponseEntity.ok(productService.searchInEbay(query, limit));
+    }
 }

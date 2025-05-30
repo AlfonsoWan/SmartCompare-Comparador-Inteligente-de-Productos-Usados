@@ -3,9 +3,12 @@ package com.smartcompare.product.application;
 import com.smartcompare.product.domain.Product;
 import com.smartcompare.product.domain.dto.ProductDTO;
 import com.smartcompare.product.domain.dto.MercadoLibreSearchResponse;
+import com.smartcompare.product.domain.dto.EbaySearchResponse;
 import com.smartcompare.product.domain.exception.ProductNotFoundException;
 import com.smartcompare.product.infrastructure.ProductRepository;
 import com.smartcompare.product.infrastructure.MercadoLibreClient;
+import com.smartcompare.product.infrastructure.EbayApiClient;
+import com.smartcompare.product.infrastructure.EbayOAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,8 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
     private final MercadoLibreClient mercadoLibreClient;
+    private final EbayApiClient ebayApiClient;
+    private final EbayOAuthService ebayOAuthService;
 
     @Value("${mercadolibre.accept-header:application/json}")
     private String acceptHeader;
@@ -65,6 +70,14 @@ public class ProductService {
         return mercadoLibreClient.searchProducts(query, offset, limit, acceptHeader);
     }
 
+    public EbaySearchResponse searchInEbay(String query, Integer limit) {
+        String token = ebayOAuthService.getAppAccessToken();
+        if (token == null) {
+            throw new RuntimeException("No se pudo obtener el token de eBay");
+        }
+        return ebayApiClient.searchProducts(query, limit != null ? limit : 10, token);
+    }
+
     private ProductDTO toDTO(Product product) {
         return ProductDTO.builder()
                 .id(product.getId())
@@ -76,4 +89,3 @@ public class ProductService {
                 .build();
     }
 }
-

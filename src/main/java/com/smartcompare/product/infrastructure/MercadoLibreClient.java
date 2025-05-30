@@ -16,7 +16,7 @@ public interface MercadoLibreClient {
         @RequestParam("q") String query,
         @RequestParam(value = "offset", required = false) Integer offset,
         @RequestParam(value = "limit", required = false) Integer limit,
-        @RequestHeader("Accept") String acceptHeader
+            @RequestHeader("Accept") String acceptHeader
     );
 
     @GetMapping("/items/{id}")

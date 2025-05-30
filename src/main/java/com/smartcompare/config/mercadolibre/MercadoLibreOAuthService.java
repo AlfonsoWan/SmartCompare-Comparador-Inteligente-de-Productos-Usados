@@ -10,7 +10,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Service
-public class MercadoLibreOAuthService {
+public class    MercadoLibreOAuthService {
 
     @Value("${mercadolibre.clientId}")
     private String clientId;
