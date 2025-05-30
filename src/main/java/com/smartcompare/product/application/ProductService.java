@@ -6,7 +6,7 @@ import com.smartcompare.product.domain.dto.MercadoLibreSearchResponse;
 import com.smartcompare.product.domain.dto.EbaySearchResponse;
 import com.smartcompare.product.domain.exception.ProductNotFoundException;
 import com.smartcompare.product.infrastructure.ProductRepository;
-import com.smartcompare.product.infrastructure.MercadoLibreClient;
+import com.smartcompare.product.infrastructure.MercadoLibreApiClient;
 import com.smartcompare.product.infrastructure.EbayApiClient;
 import com.smartcompare.product.infrastructure.EbayOAuthService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-    private final MercadoLibreClient mercadoLibreClient;
+    private final MercadoLibreApiClient mercadoLibreApiClient;
     private final EbayApiClient ebayApiClient;
     private final EbayOAuthService ebayOAuthService;
 
@@ -67,7 +67,7 @@ public class ProductService {
     }
 
     public MercadoLibreSearchResponse searchInMercadoLibre(String query, Integer offset, Integer limit) {
-        return mercadoLibreClient.searchProducts(query, offset, limit, acceptHeader);
+        return mercadoLibreApiClient.searchProducts(query, offset, limit);
     }
 
     public EbaySearchResponse searchInEbay(String query, Integer limit) {
