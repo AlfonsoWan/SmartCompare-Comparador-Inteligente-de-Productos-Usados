@@ -23,13 +23,11 @@ public class MercadoLibreAuthService {
     @Value("${mercadolibre.redirect-uri}")
     private String redirectUri;
 
-    public String generarUrlAutorizacion(String codeChallenge) {
+    public String generarUrlAutorizacion() {
         String url = "https://auth.mercadolibre.com.ar/authorization"
                 + "?response_type=code"
                 + "&client_id=" + appId
-                + "&redirect_uri=" + redirectUri
-                + "&code_challenge=" + codeChallenge
-                + "&code_challenge_method=S256";
+                + "&redirect_uri=" + redirectUri;
         return url;
     }
 

@@ -17,8 +17,8 @@ public class MercadoLibreAuthController {
     }
 
     @GetMapping("/auth/mercadolibre")
-    public String iniciarAutenticacion(@RequestParam String codeChallenge) {
-        return authService.generarUrlAutorizacion(codeChallenge);
+    public String iniciarAutenticacion() {
+        return authService.generarUrlAutorizacion();
     }
 
     @GetMapping("/auth/mercadolibre/callback")
