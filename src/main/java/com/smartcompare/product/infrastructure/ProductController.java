@@ -53,18 +53,6 @@ public class ProductController {
     }
 
     /**
-     * Busca productos en MercadoLibre.
-     */
-    @GetMapping("/mercadolibre/search")
-    public ResponseEntity<?> searchInMercadoLibre(
-            @RequestParam String query,
-            @RequestParam(required = false) Integer offset,
-            @RequestParam(required = false) Integer limit
-    ) {
-        return ResponseEntity.ok(productService.searchInMercadoLibre(query, offset, limit));
-    }
-
-    /**
      * Busca productos en eBay.
      */
     @GetMapping("/ebay/search")

@@ -2,31 +2,23 @@ package com.smartcompare.product.application;
 
 import com.smartcompare.product.domain.Product;
 import com.smartcompare.product.domain.dto.ProductDTO;
-import com.smartcompare.product.domain.dto.MercadoLibreSearchResponse;
 import com.smartcompare.product.domain.dto.EbaySearchResponse;
 import com.smartcompare.product.domain.exception.ProductNotFoundException;
 import com.smartcompare.product.infrastructure.ProductRepository;
-import com.smartcompare.product.infrastructure.MercadoLibreApiClient;
 import com.smartcompare.product.infrastructure.EbayApiClient;
 import com.smartcompare.product.infrastructure.EbayOAuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
-    private final MercadoLibreApiClient mercadoLibreApiClient;
     private final EbayApiClient ebayApiClient;
     private final EbayOAuthService ebayOAuthService;
-
-    @Value("${mercadolibre.accept-header:application/json}")
-    private String acceptHeader;
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
@@ -64,10 +56,6 @@ public class ProductService {
                 .build();
         product = productRepository.save(product);
         return toDTO(product);
-    }
-
-    public MercadoLibreSearchResponse searchInMercadoLibre(String query, Integer offset, Integer limit) {
-        return mercadoLibreApiClient.searchProducts(query, offset, limit);
     }
 
     public EbaySearchResponse searchInEbay(String query, Integer limit) {
