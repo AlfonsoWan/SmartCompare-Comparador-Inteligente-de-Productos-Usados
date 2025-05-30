@@ -6,12 +6,12 @@ import com.smartcompare.product.domain.dto.MercadoLibreSearchResponse;
 import com.smartcompare.product.domain.exception.ProductNotFoundException;
 import com.smartcompare.product.infrastructure.ProductRepository;
 import com.smartcompare.product.infrastructure.MercadoLibreClient;
+import com.smartcompare.config.mercadolibre.MercadoLibreAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepository;
     private final MercadoLibreClient mercadoLibreClient;
+    private final MercadoLibreAuthService mercadoLibreAuthService;
 
     @Value("${mercadolibre.accept-header:application/json}")
     private String acceptHeader;
@@ -62,7 +63,9 @@ public class ProductService {
     }
 
     public MercadoLibreSearchResponse searchInMercadoLibre(String query, Integer offset, Integer limit) {
-        return mercadoLibreClient.searchProducts(query, offset, limit, acceptHeader);
+        String accessToken = mercadoLibreAuthService.getAccessToken();
+        String authorizationHeader = "Bearer " + accessToken;
+        return mercadoLibreClient.searchProducts(query, offset, limit, acceptHeader, authorizationHeader);
     }
 
     private ProductDTO toDTO(Product product) {

@@ -4,9 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import com.smartcompare.config.mercadolibre.token.MercadoLibreTokenRepository;
-import com.smartcompare.config.mercadolibre.token.MercadoLibreTokenService;
-import com.smartcompare.config.mercadolibre.token.MercadoLibreToken;
 
 import static org.mockito.Mockito.*;
 
