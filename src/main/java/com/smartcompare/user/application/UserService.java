@@ -93,6 +93,10 @@ public class UserService {
                 .build();
     }
 
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     private UserDTO toDTO(User user) {
         return UserDTO.builder()
                 .id(user.getId())

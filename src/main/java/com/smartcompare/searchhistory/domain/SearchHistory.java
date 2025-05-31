@@ -17,11 +17,11 @@ public class SearchHistory {
     private Long id;
 
     @Column(nullable = false)
-    private Long userId;
-
-    @Column(nullable = false)
     private String terms;
 
     @Column(nullable = false)
     private LocalDateTime date;
+
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 }
