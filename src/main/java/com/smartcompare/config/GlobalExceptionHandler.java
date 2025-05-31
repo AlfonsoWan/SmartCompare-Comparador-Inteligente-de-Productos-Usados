@@ -1,7 +1,5 @@
 package com.smartcompare.config;
 
-import com.smartcompare.product.domain.exception.MercadoLibreNotFoundException;
-import com.smartcompare.product.domain.exception.MercadoLibreServiceException;
 import com.smartcompare.product.domain.exception.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,20 +12,6 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleProductNotFound(ProductNotFoundException ex) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(MercadoLibreNotFoundException.class)
-    public ResponseEntity<String> handleMLNotFound(MercadoLibreNotFoundException ex) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(ex.getMessage());
-    }
-
-    @ExceptionHandler(MercadoLibreServiceException.class)
-    public ResponseEntity<String> handleMLServiceError(MercadoLibreServiceException ex) {
-        return ResponseEntity
-                .status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(ex.getMessage());
     }
 
