@@ -39,9 +39,6 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/users/register").permitAll()
-                .requestMatchers("/api/products/mercadolibre/search").permitAll()
-                .requestMatchers("/api/mercadolibre/auth").permitAll()
-                .requestMatchers("/api/mercadolibre/callback").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()

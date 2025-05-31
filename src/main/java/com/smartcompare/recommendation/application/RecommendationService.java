@@ -28,6 +28,11 @@ public class RecommendationService {
         return recommendationRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<RecommendationDTO> findByUserId(Long userId) {
+        return recommendationRepository.findByUserId(userId).stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
     @Transactional
     public RecommendationDTO create(RecommendationDTO dto) {
         Recommendation recommendation = Recommendation.builder()

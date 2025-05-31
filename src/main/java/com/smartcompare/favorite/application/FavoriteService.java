@@ -4,7 +4,10 @@ import com.smartcompare.favorite.domain.Favorite;
 import com.smartcompare.favorite.domain.dto.FavoriteDTO;
 import com.smartcompare.favorite.domain.exception.FavoriteNotFoundException;
 import com.smartcompare.favorite.infrastructure.FavoriteRepository;
+import com.smartcompare.product.domain.Product;
+import com.smartcompare.product.infrastructure.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Transactional(readOnly = true)
     public FavoriteDTO findById(Long id) {
@@ -29,10 +34,40 @@ public class FavoriteService {
         return favoriteRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<FavoriteDTO> findByUserId(Long userId) {
+        return favoriteRepository.findByUserId(userId).stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
     @Transactional
     public FavoriteDTO create(FavoriteDTO dto) {
+        Long productId = dto.getProductId();
+        // Si no se provee productId, intentamos buscar o crear el producto por ebayItemId o url
+        if (productId == null) {
+            Product product = null;
+            if (dto.getUrl() != null) {
+                product = productRepository.findAll().stream()
+                        .filter(p -> p.getUrl().equals(dto.getUrl()))
+                        .findFirst().orElse(null);
+            }
+            if (product == null && dto.getTitle() != null) {
+                product = Product.builder()
+                        .name(dto.getTitle())
+                        .price(dto.getPrice())
+                        .image(dto.getImage())
+                        .source("EBAY")
+                        .url(dto.getUrl())
+                        .build();
+                product = productRepository.save(product);
+            }
+            if (product != null) {
+                productId = product.getId();
+            } else {
+                throw new RuntimeException("No se pudo crear o encontrar el producto para el favorito");
+            }
+        }
         Favorite favorite = Favorite.builder()
-                .productId(dto.getProductId())
+                .productId(productId)
                 .userId(dto.getUserId())
                 .savedDate(LocalDateTime.now())
                 .build();

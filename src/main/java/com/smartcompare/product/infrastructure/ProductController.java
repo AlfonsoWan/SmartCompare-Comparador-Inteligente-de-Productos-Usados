@@ -53,7 +53,7 @@ public class ProductController {
     }
 
     /**
-     * Busca productos en eBay.
+     * Busca productos en eBay y devuelve también el análisis inteligente (ranking).
      */
     @GetMapping("/ebay/search")
     public ResponseEntity<?> searchInEbay(

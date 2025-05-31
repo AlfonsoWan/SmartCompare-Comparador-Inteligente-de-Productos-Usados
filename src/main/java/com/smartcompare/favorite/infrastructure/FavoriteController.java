@@ -24,6 +24,11 @@ public class FavoriteController {
         return ResponseEntity.ok(favoriteService.findById(id));
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<FavoriteDTO>> getByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(favoriteService.findByUserId(userId));
+    }
+
     @PostMapping
     public ResponseEntity<FavoriteDTO> create(@Validated @RequestBody FavoriteDTO dto) {
         return ResponseEntity.ok(favoriteService.create(dto));

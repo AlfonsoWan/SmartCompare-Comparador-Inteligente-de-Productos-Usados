@@ -24,6 +24,11 @@ public class RecommendationController {
         return ResponseEntity.ok(recommendationService.findById(id));
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<RecommendationDTO>> getByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(recommendationService.findByUserId(userId));
+    }
+
     @PostMapping
     public ResponseEntity<RecommendationDTO> create(@Validated @RequestBody RecommendationDTO dto) {
         return ResponseEntity.ok(recommendationService.create(dto));
