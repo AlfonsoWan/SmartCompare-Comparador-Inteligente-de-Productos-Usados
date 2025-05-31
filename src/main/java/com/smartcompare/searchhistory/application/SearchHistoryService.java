@@ -5,6 +5,8 @@ import com.smartcompare.searchhistory.domain.dto.SearchHistoryDTO;
 import com.smartcompare.searchhistory.domain.exception.SearchHistoryNotFoundException;
 import com.smartcompare.searchhistory.infrastructure.SearchHistoryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +38,11 @@ public class SearchHistoryService {
         return searchHistoryRepository.findByUserId(userId).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SearchHistoryDTO> findByUserIdPaged(Long userId, Pageable pageable) {
+        return searchHistoryRepository.findByUserId(userId, pageable).map(this::toDTO);
     }
 
     @Transactional

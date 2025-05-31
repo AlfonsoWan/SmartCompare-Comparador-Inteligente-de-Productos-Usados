@@ -7,6 +7,8 @@ import com.smartcompare.recommendation.infrastructure.RecommendationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +33,11 @@ public class RecommendationService {
     @Transactional(readOnly = true)
     public List<RecommendationDTO> findByUserId(Long userId) {
         return recommendationRepository.findByUserId(userId).stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<RecommendationDTO> findByUserIdPaged(Long userId, Pageable pageable) {
+        return recommendationRepository.findByUserId(userId, pageable).map(this::toDTO);
     }
 
     @Transactional

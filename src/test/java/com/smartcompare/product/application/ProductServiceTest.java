@@ -3,11 +3,14 @@ package com.smartcompare.product.application;
 import com.smartcompare.product.domain.Product;
 import com.smartcompare.product.domain.dto.ProductDTO;
 import com.smartcompare.product.domain.exception.ProductNotFoundException;
+import com.smartcompare.product.infrastructure.EbayApiClient;
 import com.smartcompare.product.infrastructure.ProductRepository;
-import com.smartcompare.product.infrastructure.MercadoLibreClient;
+import com.smartcompare.product.infrastructure.EbayOAuthService;
+import com.smartcompare.smartranking.application.SmartRankingService;
+import com.smartcompare.searchhistory.application.SearchHistoryService;
+import com.smartcompare.recommendation.application.RecommendationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import java.util.Optional;
@@ -18,14 +21,29 @@ class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
     @Mock
-    private MercadoLibreClient mercadoLibreClient;
-    @InjectMocks
+    private EbayApiClient ebayApiClient;
+    @Mock
+    private EbayOAuthService ebayOAuthService;
+    @Mock
+    private SmartRankingService smartRankingService;
+    @Mock
+    private SearchHistoryService searchHistoryService;
+    @Mock
+    private RecommendationService recommendationService;
+
     private ProductService productService;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        productService = new ProductService(productRepository, mercadoLibreClient);
+        productService = new ProductService(
+            productRepository,
+            ebayApiClient,
+            ebayOAuthService,
+            smartRankingService,
+            searchHistoryService,
+            recommendationService
+        );
     }
 
     @Test

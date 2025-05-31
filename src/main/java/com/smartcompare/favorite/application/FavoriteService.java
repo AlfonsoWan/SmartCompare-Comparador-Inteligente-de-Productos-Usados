@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +39,11 @@ public class FavoriteService {
     @Transactional(readOnly = true)
     public List<FavoriteDTO> findByUserId(Long userId) {
         return favoriteRepository.findByUserId(userId).stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Page<FavoriteDTO> findByUserIdPaged(Long userId, Pageable pageable) {
+        return favoriteRepository.findByUserId(userId, pageable).map(this::toDTO);
     }
 
     @Transactional
