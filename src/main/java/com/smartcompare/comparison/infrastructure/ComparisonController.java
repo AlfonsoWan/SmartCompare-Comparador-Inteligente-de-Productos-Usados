@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/comparisons")
 @RequiredArgsConstructor
-public class ComparisonController {
+public class    ComparisonController {
     private final ComparisonService comparisonService;
 
     @GetMapping

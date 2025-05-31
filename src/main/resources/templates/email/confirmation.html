@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <title>Confirmación de Viaje</title>
+    <style>
+        .container {
+            font-family: Arial, sans-serif;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+        .titulo {
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="titulo">¡Tu viaje ha sido confirmado!</h2>
+    <p>Gracias por confiar en nuestra plataforma.</p>
+    <p><strong>Destino:</strong> <span th:text="${destination}"></span></p>
+    <p><strong>Fecha:</strong> <span th:text="${date}"></span></p>
+</div>
+</body>
+</html>

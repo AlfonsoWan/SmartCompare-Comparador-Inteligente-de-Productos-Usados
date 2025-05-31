@@ -6,44 +6,63 @@ import com.smartcompare.user.domain.dto.AuthResponse;
 import com.smartcompare.user.domain.dto.UserDTO;
 import com.smartcompare.user.infrastructure.JwtService;
 import com.smartcompare.user.infrastructure.UserRepository;
+import com.smartcompare.email.domain.EmailService;        // <-- Importamos EmailService
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
-    @Transactional(readOnly = true)
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
+    private final EmailService emailService;   // <-- Inyectamos EmailService
 
     @Transactional
     public UserDTO register(UserDTO dto) {
-        if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email ya registrado");
-        }
-
-        User user = User.builder()
+        // 1) Creamos y persistimos el nuevo usuario (igual que antes)
+        User userToSave = User.builder()
                 .name(dto.getName())
                 .email(dto.getEmail())
                 .password(passwordEncoder.encode(dto.getPassword()))
+                .role(dto.getRole())
                 .authType(dto.getAuthType())
-                .role(User.Role.USER)
                 .build();
 
-        user = userRepository.save(user);
-        return toDTO(user);
+        User savedUser = userRepository.save(userToSave);
+
+        // 2) Preparamos el Contexto para la plantilla Thymeleaf
+        Context context = new Context();
+        context.setVariable("name", savedUser.getName());
+        // Por ejemplo, enviamos la fecha de registro (puedes formatear como quieras)
+        String fechaActual = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+        context.setVariable("date", fechaActual);
+        // Si quieres enviar un link de confirmación, podrías agregar algo así:
+        // context.setVariable("confirmUrl", "https://tu-dominio.com/confirm?token=XXXXX");
+
+        // 3) Envío de correo de bienvenida
+        // Usamos la plantilla "email/confirmation" (solamente si la has copiado igual que en el otro proyecto)
+        // El Subject puede ser: "Bienvenido a SmartCompare"
+        emailService.sendHtmlEmail(
+                savedUser.getEmail(),
+                "Bienvenido a SmartCompare",
+                "email/confirmation",  // Apunta a src/main/resources/templates/email/confirmation.html
+                context
+        );
+
+        // 4) Retornamos el DTO del usuario recién creado
+        return toDTO(savedUser);
     }
 
     @Transactional
@@ -59,15 +78,17 @@ public class UserService {
     @Transactional
     public AuthResponse login(AuthRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        User user = userOptional.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        String token = jwtService.generateToken(user);
         return AuthResponse.builder()
-                .token(token)
+                .token(jwtService.generateToken(user))
                 .user(toDTO(user))
                 .build();
     }
