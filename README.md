@@ -80,7 +80,7 @@ Resolver este problema permite a los usuarios ahorrar tiempo, tomar mejores deci
 
 ### Diagrama de Entidades
 
-![Diagrama de Entidades](TODO:enlace-o-imagen-del-diagrama)
+![Diagrama de la aplicación](smartCompareApplication.png)
 
 ### Descripción de Entidades
 
