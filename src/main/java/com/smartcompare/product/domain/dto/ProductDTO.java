@@ -7,11 +7,10 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ProductDTO {
-    private Long id;
+    private String id;
     private String name;
     private Double price;
     private String image;
     private String source;
     private String url;
 }
-

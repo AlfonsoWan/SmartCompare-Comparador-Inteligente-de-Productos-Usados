@@ -31,7 +31,7 @@ public class FavoriteController {
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("#userId == authentication.name or hasRole('ADMIN')")
+    @PreAuthorize("#userId == principal.id or hasRole('ADMIN')")
     public ResponseEntity<Page<FavoriteDTO>> getByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -41,7 +41,7 @@ public class FavoriteController {
     }
 
     @PostMapping
-    @PreAuthorize("#dto.userId == authentication.name or hasRole('ADMIN')")
+    @PreAuthorize("#dto.userId == principal.id or hasRole('ADMIN')")
     public ResponseEntity<FavoriteDTO> create(@Validated @RequestBody FavoriteDTO dto) {
         return ResponseEntity.ok(favoriteService.create(dto));
     }

@@ -29,11 +29,11 @@ class RecommendationServiceTest {
 
     @Test
     void testFindById_found() {
-        Recommendation rec = Recommendation.builder().id(1L).suggestedProductId(10L).reason("test").userId(1L).build();
+        Recommendation rec = Recommendation.builder().id(1L).suggestedProductId("10").reason("test").userId(1L).build();
         when(recommendationRepository.findById(1L)).thenReturn(Optional.of(rec));
         RecommendationDTO dto = recommendationService.findById(1L);
         assertEquals(1L, dto.getId());
-        assertEquals(10L, dto.getSuggestedProductId());
+        assertEquals("10", dto.getSuggestedProductId());
     }
 
     @Test
@@ -44,11 +44,10 @@ class RecommendationServiceTest {
 
     @Test
     void testFindAll() {
-        Recommendation r1 = Recommendation.builder().id(1L).suggestedProductId(10L).reason("a").userId(1L).build();
-        Recommendation r2 = Recommendation.builder().id(2L).suggestedProductId(20L).reason("b").userId(2L).build();
+        Recommendation r1 = Recommendation.builder().id(1L).suggestedProductId("10").reason("a").userId(1L).build();
+        Recommendation r2 = Recommendation.builder().id(2L).suggestedProductId("20").reason("b").userId(2L).build();
         when(recommendationRepository.findAll()).thenReturn(Arrays.asList(r1, r2));
         List<RecommendationDTO> list = recommendationService.findAll();
         assertEquals(2, list.size());
     }
 }
-

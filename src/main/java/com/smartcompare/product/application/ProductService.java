@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,10 +32,25 @@ public class ProductService {
     private final RecommendationService recommendationService;
 
     @Transactional(readOnly = true)
-    public ProductDTO findById(Long id) {
-        Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Producto no encontrado: " + id));
-        return toDTO(product);
+    public ProductDTO findById(String id) {
+        // Primero intenta buscar en la base de datos local
+        Optional<Product> productOpt = productRepository.findById(id);
+        if (productOpt.isPresent()) {
+            return toDTO(productOpt.get());
+        }
+
+        // Si no está, intenta buscar en eBay (o fuente externa)
+        String token = ebayOAuthService.getAppAccessToken();
+        if (token == null) {
+            throw new ProductNotFoundException("No se pudo obtener el token de eBay");
+        }
+        // Aquí deberías tener un método para buscar un producto individual en eBay por su id
+        ProductDTO ebayProduct = ebayApiClient.getProductById(id, token);
+        if (ebayProduct != null) {
+            return ebayProduct;
+        }
+
+        throw new ProductNotFoundException("Producto no encontrado: " + id);
     }
 
     @Transactional(readOnly = true)
@@ -48,7 +64,7 @@ public class ProductService {
                     } else if (sortBy.equalsIgnoreCase("price")) {
                         return Double.compare(a.getPrice(), b.getPrice());
                     } else {
-                        return Long.compare(a.getId(), b.getId());
+                        return a.getId().compareTo(b.getId());
                     }
                 })
                 .map(this::toDTO)
@@ -83,13 +99,13 @@ public class ProductService {
         // Crear recomendaciones automáticas para los top 3 productos del ranking
         if (userId != null && ranking != null && ranking.getTopProductItemIds() != null) {
             for (String itemId : ranking.getTopProductItemIds()) {
-                // Buscar el producto en la base de datos por URL (ya que Product solo tiene id interno y url)
+                // Buscar el producto en la base de datos por URL
                 Product product = productRepository.findAll().stream()
                         .filter(p -> p.getUrl() != null && p.getUrl().contains(itemId))
                         .findFirst().orElse(null);
                 if (product != null) {
                     RecommendationDTO rec = RecommendationDTO.builder()
-                            .suggestedProductId(product.getId())
+                            .suggestedProductId(product.getId()) // Ahora esto es compatible porque ambos son String
                             .reason(ranking.getJustification())
                             .userId(userId)
                             .build();
@@ -120,4 +136,3 @@ public class ProductService {
                 .build();
     }
 }
-

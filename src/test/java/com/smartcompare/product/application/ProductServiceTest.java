@@ -48,17 +48,16 @@ class ProductServiceTest {
 
     @Test
     void testFindById_found() {
-        Product product = Product.builder().id(1L).name("Test").price(100.0).build();
-        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-        ProductDTO dto = productService.findById(1L);
+        Product product = Product.builder().id("1").name("Test").price(100.0).build();
+        when(productRepository.findById("1")).thenReturn(Optional.of(product));
+        ProductDTO dto = productService.findById("1");
         assertEquals("Test", dto.getName());
         assertEquals(100.0, dto.getPrice());
     }
 
     @Test
     void testFindById_notFound() {
-        when(productRepository.findById(2L)).thenReturn(Optional.empty());
-        assertThrows(ProductNotFoundException.class, () -> productService.findById(2L));
+        when(productRepository.findById("2")).thenReturn(Optional.empty());
+        assertThrows(ProductNotFoundException.class, () -> productService.findById("2"));
     }
 }
-

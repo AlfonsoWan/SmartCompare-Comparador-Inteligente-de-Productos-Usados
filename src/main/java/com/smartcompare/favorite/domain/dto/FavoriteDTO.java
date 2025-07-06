@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class FavoriteDTO {
     private Long id;
-    private Long productId;
+    private String productId;
     private Long userId;
     private LocalDateTime savedDate;
 

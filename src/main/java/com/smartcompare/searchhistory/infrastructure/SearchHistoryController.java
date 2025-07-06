@@ -2,6 +2,8 @@ package com.smartcompare.searchhistory.infrastructure;
 
 import com.smartcompare.searchhistory.application.SearchHistoryService;
 import com.smartcompare.searchhistory.domain.dto.SearchHistoryDTO;
+import com.smartcompare.user.application.UserService;
+import com.smartcompare.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class SearchHistoryController {
     private final SearchHistoryService searchHistoryService;
+    private final UserService userService;
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("#userId == authentication.name or hasRole('ADMIN')")
@@ -32,7 +35,12 @@ public class SearchHistoryController {
     public ResponseEntity<SearchHistoryDTO> saveSearch(
             @RequestParam String terms,
             Authentication authentication) {
-        Long userId = Long.parseLong(authentication.getName());
+        // Obtener el email/username autenticado
+        String email = authentication.getName();
+        // Buscar el usuario por email
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        Long userId = user.getId();
         return ResponseEntity.ok(searchHistoryService.save(terms, userId));
     }
 

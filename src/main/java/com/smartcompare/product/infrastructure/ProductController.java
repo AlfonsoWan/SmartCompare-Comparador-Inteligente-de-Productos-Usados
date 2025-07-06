@@ -40,7 +40,7 @@ public class ProductController {
      * Obtiene un producto por su ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<ProductDTO> getById(@PathVariable String id) {
         return ResponseEntity.ok(productService.findById(id));
     }
 

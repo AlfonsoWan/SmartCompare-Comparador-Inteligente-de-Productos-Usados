@@ -48,7 +48,7 @@ public class FavoriteService {
 
     @Transactional
     public FavoriteDTO create(FavoriteDTO dto) {
-        Long productId = dto.getProductId();
+        String productId = dto.getProductId();
         // Si no se provee productId, intentamos buscar o crear el producto por ebayItemId o url
         if (productId == null) {
             Product product = null;
@@ -99,4 +99,3 @@ public class FavoriteService {
                 .build();
     }
 }
-
