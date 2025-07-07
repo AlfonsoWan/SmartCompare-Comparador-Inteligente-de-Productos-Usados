@@ -19,4 +19,10 @@ public class Favorite {
     private String productId;
     private Long userId;
     private LocalDateTime savedDate;
+    private String title;
+    private String image;
+    private Double price;
+    private String currency;
+    private String condition;
+    private String url;
 }

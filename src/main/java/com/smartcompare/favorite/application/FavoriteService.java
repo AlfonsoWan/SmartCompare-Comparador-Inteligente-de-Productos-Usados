@@ -77,6 +77,12 @@ public class FavoriteService {
                 .productId(productId)
                 .userId(dto.getUserId())
                 .savedDate(LocalDateTime.now())
+                .title(dto.getTitle())
+                .image(dto.getImage())
+                .price(dto.getPrice())
+                .currency(dto.getCurrency())
+                .condition(dto.getCondition())
+                .url(dto.getUrl())
                 .build();
         Favorite saved = favoriteRepository.save(favorite);
         return toDTO(saved);
@@ -96,6 +102,12 @@ public class FavoriteService {
                 .productId(favorite.getProductId())
                 .userId(favorite.getUserId())
                 .savedDate(favorite.getSavedDate())
+                .title(favorite.getTitle())
+                .image(favorite.getImage())
+                .price(favorite.getPrice())
+                .currency(favorite.getCurrency())
+                .condition(favorite.getCondition())
+                .url(favorite.getUrl())
                 .build();
     }
 }
