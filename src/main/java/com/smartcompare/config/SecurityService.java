@@ -1,6 +1,10 @@
 package com.smartcompare.config;
 
 import com.smartcompare.user.application.UserService;
+import com.smartcompare.comparison.application.ComparisonService;
+import com.smartcompare.favorite.application.FavoriteService;
+import com.smartcompare.recommendation.application.RecommendationService;
+import com.smartcompare.searchhistory.application.SearchHistoryService;
 import com.smartcompare.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -9,10 +13,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+
+
 @Service
 @RequiredArgsConstructor
 public class SecurityService {
     private final UserService userService;
+    private final FavoriteService favoriteService;
+    private final ComparisonService comparisonService;
+    private final RecommendationService recommendationService;
+    private final SearchHistoryService searchHistoryService;
 
     public boolean isOwnerOrAdmin(Long resourceUserId, Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -61,5 +71,34 @@ public class SecurityService {
     public User getCurrentUser(Authentication authentication) {
         return userService.findByEmail(authentication.getName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public Long getAuthenticatedUserId(Authentication authentication) {
+        return getCurrentUserId(authentication)
+                .orElseThrow(() -> new RuntimeException("Usuario no autenticado"));
+    }
+
+    public boolean canAccessResource(Long resourceId, String resourceType, Authentication authentication) {
+        if (hasAdminRole(authentication)) {
+            return true;
+        }
+
+        Long resourceUserId = getResourceUserId(resourceId, resourceType);
+        return isSameUser(resourceUserId, authentication);
+    }
+
+    private Long getResourceUserId(Long resourceId, String resourceType) {
+        switch (resourceType.toLowerCase()) {
+            case "favorite":
+                return favoriteService.getUserIdFromFavorite(resourceId);
+            case "comparison":
+                return comparisonService.getUserIdFromComparison(resourceId);
+            case "recommendation":
+                return recommendationService.getUserIdFromRecommendation(resourceId);
+            case "searchhistory":
+                return searchHistoryService.getUserIdFromSearchHistory(resourceId);
+            default:
+                throw new IllegalArgumentException("Tipo de recurso no soportado: " + resourceType);
+        }
     }
 }

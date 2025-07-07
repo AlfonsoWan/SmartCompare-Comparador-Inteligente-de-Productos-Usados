@@ -67,5 +67,9 @@ public class RecommendationService {
                 .userId(recommendation.getUserId())
                 .build();
     }
+
+    public Long getUserIdFromRecommendation(Long recommendationId) {
+        return findById(recommendationId).getUserId();
+    }
 }
 

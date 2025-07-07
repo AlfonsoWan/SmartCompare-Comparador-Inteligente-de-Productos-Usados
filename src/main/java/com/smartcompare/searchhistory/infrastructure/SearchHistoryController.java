@@ -1,9 +1,8 @@
 package com.smartcompare.searchhistory.infrastructure;
 
+import com.smartcompare.config.SecurityService;
 import com.smartcompare.searchhistory.application.SearchHistoryService;
 import com.smartcompare.searchhistory.domain.dto.SearchHistoryDTO;
-import com.smartcompare.user.application.UserService;
-import com.smartcompare.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,7 +17,7 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class SearchHistoryController {
     private final SearchHistoryService searchHistoryService;
-    private final UserService userService;
+    private final SecurityService securityService; // Reemplazar UserService
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
@@ -31,21 +30,17 @@ public class SearchHistoryController {
     }
 
     @PostMapping
-    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()") // Solo verifica autenticación básica
     public ResponseEntity<SearchHistoryDTO> saveSearch(
             @RequestParam String terms,
             Authentication authentication) {
-        // Obtener el email/username autenticado
-        String email = authentication.getName();
-        // Buscar el usuario por email
-        User user = userService.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        Long userId = user.getId();
+        // Obtiene el ID del usuario autenticado directamente
+        Long userId = securityService.getAuthenticatedUserId(authentication);
         return ResponseEntity.ok(searchHistoryService.save(terms, userId));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
+    @PreAuthorize("@securityService.canAccessResource(#id, 'comparison', authentication)")
     public ResponseEntity<SearchHistoryDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(searchHistoryService.findById(id));
     }

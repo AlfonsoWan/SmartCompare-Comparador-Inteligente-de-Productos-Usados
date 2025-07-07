@@ -63,4 +63,9 @@ public class SearchHistoryService {
                 .userId(entity.getUserId())
                 .build();
     }
+
+    @Transactional(readOnly = true)
+    public Long getUserIdFromSearchHistory(Long searchHistoryId) {
+        return findById(searchHistoryId).getUserId(); // Asume que el DTO tiene userId
+    }
 }

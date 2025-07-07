@@ -110,4 +110,8 @@ public class FavoriteService {
                 .url(favorite.getUrl())
                 .build();
     }
+
+    public Long getUserIdFromFavorite(Long favoriteId) {
+        return findById(favoriteId).getUserId();
+    }
 }
