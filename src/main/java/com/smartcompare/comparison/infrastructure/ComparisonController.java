@@ -31,19 +31,19 @@ public class    ComparisonController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'comparison')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<ComparisonDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(comparisonService.findById(id));
     }
 
     @PostMapping
-    @PreAuthorize("#dto.userId == authentication.name or hasRole('ADMIN')")
+    @PreAuthorize("@securityService.isSameUser(#dto.userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<ComparisonDTO> create(@Validated @RequestBody ComparisonDTO dto, Authentication authentication) {
         return ResponseEntity.ok(comparisonService.create(dto));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'comparison')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         comparisonService.delete(id);
         return ResponseEntity.noContent().build();

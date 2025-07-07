@@ -25,13 +25,13 @@ public class RecommendationController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'recommendation')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<RecommendationDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(recommendationService.findById(id));
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("#userId == authentication.name or hasRole('ADMIN')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<Page<RecommendationDTO>> getByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -41,13 +41,13 @@ public class RecommendationController {
     }
 
     @PostMapping
-    @PreAuthorize("#dto.userId == authentication.name or hasRole('ADMIN')")
+    @PreAuthorize("@securityService.isSameUser(#dto.userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<RecommendationDTO> create(@Validated @RequestBody RecommendationDTO dto) {
         return ResponseEntity.ok(recommendationService.create(dto));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'recommendation')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         recommendationService.delete(id);
         return ResponseEntity.noContent().build();

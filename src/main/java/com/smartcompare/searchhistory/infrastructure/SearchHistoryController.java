@@ -21,7 +21,7 @@ public class SearchHistoryController {
     private final UserService userService;
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("#userId == authentication.name or hasRole('ADMIN')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<Page<SearchHistoryDTO>> getByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -31,7 +31,7 @@ public class SearchHistoryController {
     }
 
     @PostMapping
-    @PreAuthorize("#authentication.name == T(java.lang.String).valueOf(#authentication.name) or hasRole('ADMIN')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<SearchHistoryDTO> saveSearch(
             @RequestParam String terms,
             Authentication authentication) {
@@ -45,7 +45,7 @@ public class SearchHistoryController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'searchhistory')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<SearchHistoryDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(searchHistoryService.findById(id));
     }

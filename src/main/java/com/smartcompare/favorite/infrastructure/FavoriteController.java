@@ -25,13 +25,13 @@ public class FavoriteController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'favorite')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<FavoriteDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(favoriteService.findById(id));
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("#userId == principal.id or hasRole('ADMIN')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<Page<FavoriteDTO>> getByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -41,13 +41,13 @@ public class FavoriteController {
     }
 
     @PostMapping
-    @PreAuthorize("#dto.userId == principal.id or hasRole('ADMIN')")
+    @PreAuthorize("@securityService.isSameUser(#dto.userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<FavoriteDTO> create(@Validated @RequestBody FavoriteDTO dto) {
         return ResponseEntity.ok(favoriteService.create(dto));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'favorite')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         favoriteService.delete(id);
         return ResponseEntity.noContent().build();
