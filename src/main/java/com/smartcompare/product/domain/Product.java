@@ -28,4 +28,7 @@ public class Product {
 
     @Column(nullable = false, length = 500)
     private String url;
+
+    @Column(name = "primary_category_id", length = 50)
+    private String primaryCategoryId;
 }

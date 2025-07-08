@@ -64,6 +64,7 @@ public class FavoriteService {
                         .image(dto.getImage())
                         .source("EBAY")
                         .url(dto.getUrl())
+                        .primaryCategoryId(dto.getPrimaryCategoryId())
                         .build();
                 product = productRepository.save(product);
             }
@@ -83,6 +84,7 @@ public class FavoriteService {
                 .currency(dto.getCurrency())
                 .condition(dto.getCondition())
                 .url(dto.getUrl())
+                .primaryCategoryId(dto.getPrimaryCategoryId())
                 .build();
         Favorite saved = favoriteRepository.save(favorite);
         return toDTO(saved);
@@ -108,6 +110,7 @@ public class FavoriteService {
                 .currency(favorite.getCurrency())
                 .condition(favorite.getCondition())
                 .url(favorite.getUrl())
+                .primaryCategoryId(favorite.getPrimaryCategoryId())
                 .build();
     }
 

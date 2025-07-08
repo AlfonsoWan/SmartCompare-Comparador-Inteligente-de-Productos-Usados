@@ -21,4 +21,5 @@ public class FavoriteDTO {
     private String url;
     private String condition;
     private String currency;
+    private String primaryCategoryId;
 }

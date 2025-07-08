@@ -28,4 +28,6 @@ public class Favorite {
     private String condition;
     @Column(length = 500) // URLs largas
     private String url;
+    @Column(name = "primary_category_id", length = 50)
+    private String primaryCategoryId;
 }

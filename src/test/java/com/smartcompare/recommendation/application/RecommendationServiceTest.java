@@ -24,7 +24,8 @@ class RecommendationServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        recommendationService = new RecommendationService(recommendationRepository);
+        recommendationService = new RecommendationService(recommendationRepository,
+                null, null, null);
     }
 
     @Test
