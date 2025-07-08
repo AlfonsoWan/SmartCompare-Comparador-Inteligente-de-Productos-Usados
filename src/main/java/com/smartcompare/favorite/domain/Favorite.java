@@ -19,10 +19,13 @@ public class Favorite {
     private String productId;
     private Long userId;
     private LocalDateTime savedDate;
+    @Column(length = 500) // Aumentar para títulos largos
     private String title;
+    @Column(length = 500) // URLs pueden ser largas
     private String image;
     private Double price;
     private String currency;
     private String condition;
+    @Column(length = 500) // URLs largas
     private String url;
 }
