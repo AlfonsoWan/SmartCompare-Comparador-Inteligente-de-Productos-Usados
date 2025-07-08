@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
@@ -20,8 +21,24 @@ public class EbayApiClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public EbaySearchResponse searchProducts(String query, int limit, String accessToken) {
-        String url = baseUrl + browseEndpoint + "?q=" + query + "&limit=" + limit;
+    public EbaySearchResponse searchProducts(String query, int limit, String accessToken, String zipCode, Double radius) {
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder
+                .fromUriString(baseUrl + browseEndpoint)
+                .queryParam("q", query)
+                .queryParam("limit", limit);
+
+        // Si hay filtros geográficos, los agregamos como múltiples parámetros 'filter' según la documentación oficial
+        if (zipCode != null && !zipCode.isEmpty() && radius != null) {
+            // Filtros obligatorios para local pickup geo-localizado
+            uriBuilder.queryParam("filter", "deliveryOptions:{SELLER_ARRANGED_LOCAL_PICKUP}");
+            uriBuilder.queryParam("filter", "pickupCountry:US");
+            uriBuilder.queryParam("filter", "pickupPostalCode:" + zipCode);
+            uriBuilder.queryParam("filter", "pickupRadius:" + radius.intValue());
+            uriBuilder.queryParam("filter", "pickupRadiusUnit:mi");
+            uriBuilder.queryParam("sort", "distance");
+        }
+
+        String url = uriBuilder.toUriString();
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.set("Accept", "application/json");
@@ -33,6 +50,11 @@ public class EbayApiClient {
                 EbaySearchResponse.class
         );
         return response.getBody();
+    }
+
+    // Sobrecarga para compatibilidad retroactiva
+    public EbaySearchResponse searchProducts(String query, int limit, String accessToken) {
+        return searchProducts(query, limit, accessToken, null, null);
     }
 
     public ProductDTO getProductById(String ebayItemId, String accessToken) {

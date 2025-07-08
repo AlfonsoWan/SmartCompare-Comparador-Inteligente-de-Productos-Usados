@@ -71,6 +71,17 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductDTO> findAllPaged(int page, int size, String sortBy, String zipCode, Double radius) {
+        List<ProductDTO> productos = findAllPaged(page, size, sortBy);
+        // Filtro geográfico simulado (placeholder)
+        if (zipCode != null && radius != null) {
+            // Aquí deberías implementar la lógica real de filtrado por ubicación
+            // Por ahora, solo retorna la lista sin filtrar
+        }
+        return productos;
+    }
+
     @Transactional
     public ProductDTO save(ProductDTO dto) {
         Product product = Product.builder()
@@ -84,12 +95,12 @@ public class ProductService {
         return toDTO(product);
     }
 
-    public EbaySearchAndRankingResponse searchInEbay(String query, Integer limit) {
+    public EbaySearchAndRankingResponse searchInEbay(String query, Integer limit, String zipCode, Double radius) {
         String token = ebayOAuthService.getAppAccessToken();
         if (token == null) {
             throw new RuntimeException("No se pudo obtener el token de eBay");
         }
-        EbaySearchResponse ebayResponse = ebayApiClient.searchProducts(query, limit != null ? limit : 10, token);
+        EbaySearchResponse ebayResponse = ebayApiClient.searchProducts(query, limit != null ? limit : 10, token, zipCode, radius);
         Long userId = getCurrentUserId();
         // Guardar historial de búsqueda automáticamente
         if (userId != null && query != null && !query.isBlank()) {

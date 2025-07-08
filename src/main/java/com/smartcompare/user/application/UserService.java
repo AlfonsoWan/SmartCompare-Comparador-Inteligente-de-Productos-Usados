@@ -7,16 +7,20 @@ import com.smartcompare.user.domain.dto.UserDTO;
 import com.smartcompare.user.infrastructure.JwtService;
 import com.smartcompare.user.infrastructure.UserRepository;
 import com.smartcompare.email.domain.EmailService;        // <-- Importamos EmailService
+import com.smartcompare.user.domain.Address;
+import com.smartcompare.user.infrastructure.AddressRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,6 +32,7 @@ public class UserService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;   // <-- Inyectamos EmailService
+    private final AddressRepository addressRepository;
 
     @Transactional
     public UserDTO register(UserDTO dto) {
@@ -95,6 +100,32 @@ public class UserService {
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public List<Address> getMyAddresses() {
+        User user = getCurrentUser();
+        return addressRepository.findByUser(user);
+    }
+
+    public Address addAddress(Address address) {
+        User user = getCurrentUser();
+        address.setUser(user);
+        return addressRepository.save(address);
+    }
+
+    public void deleteAddress(Long addressId) {
+        User user = getCurrentUser();
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new RuntimeException("Dirección no encontrada"));
+        if (!address.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("No autorizado para eliminar esta dirección");
+        }
+        addressRepository.delete(address);
+    }
+
+    private User getCurrentUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
     private UserDTO toDTO(User user) {

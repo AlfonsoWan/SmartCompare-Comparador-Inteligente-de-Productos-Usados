@@ -27,10 +27,12 @@ public class SmartRankingService {
      */
     @Transactional
     public SmartRankingResultDTO analyzeAndSave(String searchTerms, Long userId, List<EbayProductDTO> products) {
-        // Ranking simple: primero por condición (mejor), luego por precio (menor), luego por relevancia del título
+        // Ranking mejorado: prioridad a LOCAL_PICKUP (en buyingOptions) y menor distancia, luego condición, precio y relevancia
         List<EbayProductDTO> ranked = products.stream()
                 .sorted(Comparator
-                        .comparing((EbayProductDTO p) -> getConditionWeight(p.getCondition())).reversed()
+                        .comparing((EbayProductDTO p) -> hasLocalPickup(p)).reversed()
+                        .thenComparing(p -> p.getDistance() != null ? p.getDistance() : Double.MAX_VALUE)
+                        .thenComparing((EbayProductDTO p) -> getConditionWeight(p.getCondition())).reversed()
                         .thenComparing(EbayProductDTO::getPrice)
                         .thenComparing(p -> -relevanceScore(p.getTitle(), searchTerms)))
                 .collect(Collectors.toList());
@@ -86,5 +88,18 @@ public class SmartRankingService {
                 .justification(result.getJustification())
                 .build();
     }
-}
 
+    /**
+     * Devuelve 1 si el producto tiene opción LOCAL_PICKUP en buyingOptions, si no 0
+     */
+    private int hasLocalPickup(EbayProductDTO p) {
+        if (p.getBuyingOptions() != null) {
+            for (String opt : p.getBuyingOptions()) {
+                if ("LOCAL_PICKUP".equalsIgnoreCase(opt)) {
+                    return 1;
+                }
+            }
+        }
+        return 0;
+    }
+}
