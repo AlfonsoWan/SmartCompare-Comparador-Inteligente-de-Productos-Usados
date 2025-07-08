@@ -25,7 +25,7 @@ class RecommendationServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         recommendationService = new RecommendationService(recommendationRepository,
-                null, null, null);
+                null, null, null, null);
     }
 
     @Test

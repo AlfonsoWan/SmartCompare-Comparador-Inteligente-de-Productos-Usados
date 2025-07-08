@@ -79,4 +79,15 @@ public class EbayApiClient {
             return null;
         }
     }
+
+    public EbaySearchResponse searchProductsByCategory(String categoryId, int limit, String accessToken) {
+        String url = baseUrl + "/buy/browse/v1/item_summary/search?category_ids="
+                + categoryId + "&limit=" + limit;
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+        ResponseEntity<EbaySearchResponse> resp = restTemplate
+                .exchange(url, HttpMethod.GET, entity, EbaySearchResponse.class);
+        return resp.getBody();
+    }
 }

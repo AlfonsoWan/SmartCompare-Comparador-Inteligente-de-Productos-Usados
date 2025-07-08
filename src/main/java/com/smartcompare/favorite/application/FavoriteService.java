@@ -46,6 +46,13 @@ public class FavoriteService {
         return favoriteRepository.findByUserId(userId, pageable).map(this::toDTO);
     }
 
+    @Transactional(readOnly = true)
+    public List<String> getFavoriteProductIds(Long userId) {
+        return favoriteRepository.findByUserId(userId).stream()
+                .map(Favorite::getProductId)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public FavoriteDTO create(FavoriteDTO dto) {
         String productId = dto.getProductId();
