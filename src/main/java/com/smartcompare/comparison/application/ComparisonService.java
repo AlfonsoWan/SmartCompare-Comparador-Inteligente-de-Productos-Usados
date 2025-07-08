@@ -64,5 +64,9 @@ public class ComparisonService {
                 .userId(comparison.getUserId())
                 .build();
     }
+
+    public Long getUserIdFromComparison(Long comparisonId) {
+        return findById(comparisonId).getUserId();
+    }
 }
 

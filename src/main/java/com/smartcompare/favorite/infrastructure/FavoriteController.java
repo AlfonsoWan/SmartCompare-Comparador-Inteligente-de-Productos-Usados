@@ -1,9 +1,11 @@
 package com.smartcompare.favorite.infrastructure;
 
 import com.smartcompare.favorite.application.FavoriteService;
+import com.smartcompare.config.SecurityService;
 import com.smartcompare.favorite.domain.dto.FavoriteDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FavoriteController {
     private final FavoriteService favoriteService;
+    private final SecurityService securityService;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -25,13 +28,13 @@ public class FavoriteController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'favorite')")
+    @PreAuthorize("@securityService.canAccessResource(#id, 'favorite', authentication)")
     public ResponseEntity<FavoriteDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(favoriteService.findById(id));
     }
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("#userId == authentication.name or hasRole('ADMIN')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<Page<FavoriteDTO>> getByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -41,13 +44,16 @@ public class FavoriteController {
     }
 
     @PostMapping
-    @PreAuthorize("#dto.userId == authentication.name or hasRole('ADMIN')")
-    public ResponseEntity<FavoriteDTO> create(@Validated @RequestBody FavoriteDTO dto) {
+    public ResponseEntity<FavoriteDTO> create(
+            @Validated @RequestBody FavoriteDTO dto,
+            Authentication authentication) {
+        Long userId = securityService.getAuthenticatedUserId(authentication);
+        dto.setUserId(userId); // Asegurar que el DTO tenga el ID correcto
         return ResponseEntity.ok(favoriteService.create(dto));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'favorite')")
+    @PreAuthorize("@securityService.canAccessResource(#id, 'favorite', authentication)")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         favoriteService.delete(id);
         return ResponseEntity.noContent().build();

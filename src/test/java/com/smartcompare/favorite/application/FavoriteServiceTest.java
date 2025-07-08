@@ -30,11 +30,11 @@ class FavoriteServiceTest {
 
     @Test
     void testFindById_found() {
-        Favorite favorite = Favorite.builder().id(1L).productId(10L).userId(1L).savedDate(LocalDateTime.now()).build();
+        Favorite favorite = Favorite.builder().id(1L).productId("10").userId(1L).savedDate(LocalDateTime.now()).build();
         when(favoriteRepository.findById(1L)).thenReturn(Optional.of(favorite));
         FavoriteDTO dto = favoriteService.findById(1L);
         assertEquals(1L, dto.getId());
-        assertEquals(10L, dto.getProductId());
+        assertEquals("10", dto.getProductId());
     }
 
     @Test
@@ -45,11 +45,10 @@ class FavoriteServiceTest {
 
     @Test
     void testFindAll() {
-        Favorite favorite1 = Favorite.builder().id(1L).productId(10L).userId(1L).savedDate(LocalDateTime.now()).build();
-        Favorite favorite2 = Favorite.builder().id(2L).productId(20L).userId(2L).savedDate(LocalDateTime.now()).build();
+        Favorite favorite1 = Favorite.builder().id(1L).productId("10").userId(1L).savedDate(LocalDateTime.now()).build();
+        Favorite favorite2 = Favorite.builder().id(2L).productId("20").userId(2L).savedDate(LocalDateTime.now()).build();
         when(favoriteRepository.findAll()).thenReturn(Arrays.asList(favorite1, favorite2));
         List<FavoriteDTO> list = favoriteService.findAll();
         assertEquals(2, list.size());
     }
 }
-

@@ -15,8 +15,7 @@ public class Recommendation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long suggestedProductId;
+    private String suggestedProductId;
     private String reason;
     private Long userId;
 }
-

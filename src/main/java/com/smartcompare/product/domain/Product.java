@@ -12,21 +12,23 @@ import lombok.*;
 @Builder
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String name;
 
     @Column(nullable = false)
     private Double price;
 
+    @Column(length = 500)
     private String image;
 
     @Column(nullable = false)
     private String source; // Ej: MERCADOLIBRE, OLX
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String url;
-}
 
+    @Column(name = "primary_category_id", length = 50)
+    private String primaryCategoryId;
+}

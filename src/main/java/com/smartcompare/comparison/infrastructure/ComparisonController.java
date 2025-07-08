@@ -2,6 +2,7 @@ package com.smartcompare.comparison.infrastructure;
 
 import com.smartcompare.comparison.application.ComparisonService;
 import com.smartcompare.comparison.domain.dto.ComparisonDTO;
+import com.smartcompare.config.SecurityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class    ComparisonController {
     private final ComparisonService comparisonService;
+    private final SecurityService securityService;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -31,19 +33,22 @@ public class    ComparisonController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'comparison')")
+    @PreAuthorize("@securityService.canAccessResource(#id, 'comparison', authentication)")
     public ResponseEntity<ComparisonDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(comparisonService.findById(id));
     }
 
     @PostMapping
-    @PreAuthorize("#dto.userId == authentication.name or hasRole('ADMIN')")
-    public ResponseEntity<ComparisonDTO> create(@Validated @RequestBody ComparisonDTO dto, Authentication authentication) {
+    public ResponseEntity<ComparisonDTO> create(
+            @Validated @RequestBody ComparisonDTO dto,
+            Authentication authentication) {
+        Long userId = securityService.getAuthenticatedUserId(authentication);
+        dto.setUserId(userId);
         return ResponseEntity.ok(comparisonService.create(dto));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'comparison')")
+    @PreAuthorize("@securityService.canAccessResource(#id, 'comparison', authentication)")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         comparisonService.delete(id);
         return ResponseEntity.noContent().build();

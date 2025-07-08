@@ -23,10 +23,12 @@ public class ProductController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String source
+            @RequestParam(required = false) String source,
+            @RequestParam(required = false) String zipCode, // Nuevo parámetro
+            @RequestParam(required = false) Double radius   // Nuevo parámetro
     ) {
         // Filtros básicos (puedes mejorar con Specification o QueryDSL)
-        List<ProductDTO> productos = productService.findAllPaged(page, size, sortBy);
+        List<ProductDTO> productos = productService.findAllPaged(page, size, sortBy, zipCode, radius);
         if (name != null) {
             productos = productos.stream().filter(p -> p.getName().toLowerCase().contains(name.toLowerCase())).toList();
         }
@@ -40,7 +42,7 @@ public class ProductController {
      * Obtiene un producto por su ID.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<ProductDTO> getById(@PathVariable String id) {
         return ResponseEntity.ok(productService.findById(id));
     }
 
@@ -58,8 +60,10 @@ public class ProductController {
     @GetMapping("/ebay/search")
     public ResponseEntity<?> searchInEbay(
             @RequestParam String query,
-            @RequestParam(required = false) Integer limit
+            @RequestParam(required = false) Integer limit,
+            @RequestParam(required = false) String zipCode,
+            @RequestParam(required = false) Double radius
     ) {
-        return ResponseEntity.ok(productService.searchInEbay(query, limit));
+        return ResponseEntity.ok(productService.searchInEbay(query, limit, zipCode, radius));
     }
 }

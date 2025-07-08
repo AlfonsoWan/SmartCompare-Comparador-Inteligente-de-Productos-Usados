@@ -51,5 +51,12 @@ public class EbayProductDTO {
         }
     }
     private String location;
-}
 
+    // Campo para las opciones de compra (ej: ["FIXED_PRICE", "LOCAL_PICKUP"])
+    @JsonProperty("buyingOptions")
+    private List<String> buyingOptions;
+
+    // Campo para la distancia (en millas, según la API de eBay, si está presente)
+    @JsonProperty("distance")
+    private Double distance;
+}

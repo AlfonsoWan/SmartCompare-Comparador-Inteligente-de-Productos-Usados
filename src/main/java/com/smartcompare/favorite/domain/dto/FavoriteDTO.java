@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Builder
 public class FavoriteDTO {
     private Long id;
-    private Long productId;
+    private String productId;
     private Long userId;
     private LocalDateTime savedDate;
 
@@ -21,4 +21,5 @@ public class FavoriteDTO {
     private String url;
     private String condition;
     private String currency;
+    private String primaryCategoryId;
 }

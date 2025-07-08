@@ -33,8 +33,8 @@ class FavoriteServicePagedTest {
     @Test
     void testFindByUserIdPaged() {
         Long userId = 1L;
-        Favorite fav1 = Favorite.builder().id(1L).productId(10L).userId(userId).savedDate(LocalDateTime.now()).build();
-        Favorite fav2 = Favorite.builder().id(2L).productId(20L).userId(userId).savedDate(LocalDateTime.now()).build();
+        Favorite fav1 = Favorite.builder().id(1L).productId("10").userId(userId).savedDate(LocalDateTime.now()).build();
+        Favorite fav2 = Favorite.builder().id(2L).productId("20").userId(userId).savedDate(LocalDateTime.now()).build();
         List<Favorite> favList = Arrays.asList(fav1, fav2);
         Pageable pageable = PageRequest.of(0, 2);
         Page<Favorite> favPage = new PageImpl<>(favList, pageable, favList.size());
@@ -43,6 +43,7 @@ class FavoriteServicePagedTest {
         assertEquals(2, result.getContent().size());
         assertEquals(1L, result.getContent().get(0).getId());
         assertEquals(2L, result.getContent().get(1).getId());
+        assertEquals("10", result.getContent().get(0).getProductId());
+        assertEquals("20", result.getContent().get(1).getProductId());
     }
 }
-

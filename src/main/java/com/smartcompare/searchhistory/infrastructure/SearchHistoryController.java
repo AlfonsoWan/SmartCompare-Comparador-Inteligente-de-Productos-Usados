@@ -1,5 +1,6 @@
 package com.smartcompare.searchhistory.infrastructure;
 
+import com.smartcompare.config.SecurityService;
 import com.smartcompare.searchhistory.application.SearchHistoryService;
 import com.smartcompare.searchhistory.domain.dto.SearchHistoryDTO;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,10 @@ import org.springframework.data.domain.Pageable;
 @RequiredArgsConstructor
 public class SearchHistoryController {
     private final SearchHistoryService searchHistoryService;
+    private final SecurityService securityService; // Reemplazar UserService
 
     @GetMapping("/user/{userId}")
-    @PreAuthorize("#userId == authentication.name or hasRole('ADMIN')")
+    @PreAuthorize("@securityService.isSameUser(#userId, authentication) or hasRole('ADMIN')")
     public ResponseEntity<Page<SearchHistoryDTO>> getByUserId(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -28,16 +30,17 @@ public class SearchHistoryController {
     }
 
     @PostMapping
-    @PreAuthorize("#authentication.name == T(java.lang.String).valueOf(#authentication.name) or hasRole('ADMIN')")
+    @PreAuthorize("isAuthenticated()") // Solo verifica autenticación básica
     public ResponseEntity<SearchHistoryDTO> saveSearch(
             @RequestParam String terms,
             Authentication authentication) {
-        Long userId = Long.parseLong(authentication.getName());
+        // Obtiene el ID del usuario autenticado directamente
+        Long userId = securityService.getAuthenticatedUserId(authentication);
         return ResponseEntity.ok(searchHistoryService.save(terms, userId));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("@securityService.isOwnerOrAdmin(#id, authentication, 'searchhistory')")
+    @PreAuthorize("@securityService.canAccessResource(#id, 'comparison', authentication)")
     public ResponseEntity<SearchHistoryDTO> getById(@PathVariable Long id) {
         return ResponseEntity.ok(searchHistoryService.findById(id));
     }

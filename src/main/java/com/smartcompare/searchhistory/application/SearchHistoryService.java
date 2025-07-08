@@ -42,25 +42,43 @@ public class SearchHistoryService {
 
     @Transactional(readOnly = true)
     public Page<SearchHistoryDTO> findByUserIdPaged(Long userId, Pageable pageable) {
-        return searchHistoryRepository.findByUserId(userId, pageable).map(this::toDTO);
+        return searchHistoryRepository.findByUserId(userId, pageable)
+                .map(this::toDTO);
     }
 
     @Transactional
     public SearchHistoryDTO save(String terms, Long userId) {
-        SearchHistory searchHistory = SearchHistory.builder()
+        SearchHistory entity = SearchHistory.builder()
                 .terms(terms)
                 .date(LocalDateTime.now())
                 .userId(userId)
                 .build();
-        return toDTO(searchHistoryRepository.save(searchHistory));
+        return toDTO(searchHistoryRepository.save(entity));
+    }
+
+    @Transactional(readOnly = true)
+    public Long getUserIdFromSearchHistory(Long searchHistoryId) {
+        return findById(searchHistoryId).getUserId();
+    }
+
+    /**
+     * Nuevo método → devuelve solo los términos de búsqueda de un usuario,
+     * en el mismo orden en que los guardaste (o el orden definido en el repo).
+     */
+    @Transactional(readOnly = true)
+    public List<String> getSearchHistoryTerms(Long userId) {
+        return searchHistoryRepository.findByUserId(userId).stream()
+                .map(SearchHistory::getTerms)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     private SearchHistoryDTO toDTO(SearchHistory entity) {
         return SearchHistoryDTO.builder()
                 .id(entity.getId())
+                .userId(entity.getUserId())
                 .terms(entity.getTerms())
                 .date(entity.getDate())
-                .userId(entity.getUserId())
                 .build();
     }
 }

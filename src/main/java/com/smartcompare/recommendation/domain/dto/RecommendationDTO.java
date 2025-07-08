@@ -8,8 +8,7 @@ import lombok.*;
 @Builder
 public class RecommendationDTO {
     private Long id;
-    private Long suggestedProductId;
+    private String suggestedProductId;
     private String reason;
     private Long userId;
 }
-

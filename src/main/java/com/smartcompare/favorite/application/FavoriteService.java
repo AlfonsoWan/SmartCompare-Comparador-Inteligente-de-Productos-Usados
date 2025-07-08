@@ -46,9 +46,16 @@ public class FavoriteService {
         return favoriteRepository.findByUserId(userId, pageable).map(this::toDTO);
     }
 
+    @Transactional(readOnly = true)
+    public List<String> getFavoriteProductIds(Long userId) {
+        return favoriteRepository.findByUserId(userId).stream()
+                .map(Favorite::getProductId)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public FavoriteDTO create(FavoriteDTO dto) {
-        Long productId = dto.getProductId();
+        String productId = dto.getProductId();
         // Si no se provee productId, intentamos buscar o crear el producto por ebayItemId o url
         if (productId == null) {
             Product product = null;
@@ -64,6 +71,7 @@ public class FavoriteService {
                         .image(dto.getImage())
                         .source("EBAY")
                         .url(dto.getUrl())
+                        .primaryCategoryId(dto.getPrimaryCategoryId())
                         .build();
                 product = productRepository.save(product);
             }
@@ -77,6 +85,13 @@ public class FavoriteService {
                 .productId(productId)
                 .userId(dto.getUserId())
                 .savedDate(LocalDateTime.now())
+                .title(dto.getTitle())
+                .image(dto.getImage())
+                .price(dto.getPrice())
+                .currency(dto.getCurrency())
+                .condition(dto.getCondition())
+                .url(dto.getUrl())
+                .primaryCategoryId(dto.getPrimaryCategoryId())
                 .build();
         Favorite saved = favoriteRepository.save(favorite);
         return toDTO(saved);
@@ -96,7 +111,17 @@ public class FavoriteService {
                 .productId(favorite.getProductId())
                 .userId(favorite.getUserId())
                 .savedDate(favorite.getSavedDate())
+                .title(favorite.getTitle())
+                .image(favorite.getImage())
+                .price(favorite.getPrice())
+                .currency(favorite.getCurrency())
+                .condition(favorite.getCondition())
+                .url(favorite.getUrl())
+                .primaryCategoryId(favorite.getPrimaryCategoryId())
                 .build();
     }
-}
 
+    public Long getUserIdFromFavorite(Long favoriteId) {
+        return findById(favoriteId).getUserId();
+    }
+}
